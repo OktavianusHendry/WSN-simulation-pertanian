@@ -1,5 +1,5 @@
 # KELOMPOK 3
-- Delvin - 21101010
+- Delvin - 2110101012
 - Oktavianus Hendry Wijaya - 2110101011
 - Paris Matio - 2110101013
 - Yogi valentino Nadeak - 2110101033
