@@ -1,8 +1,8 @@
 # KELOMPOK 3
-- Delvin
-- Oktavianus Hendry Wijaya
-- Paris Matio
-- Yogi valentino Nadeak
+- Delvin - 21101010
+- Oktavianus Hendry Wijaya - 2110101011
+- Paris Matio - 21101010
+- Yogi valentino Nadeak - 21101010
 
 Note:
 - Folder 'pertanian' merupakan folder untuk simulasi yang tidak mengalami _collision_
