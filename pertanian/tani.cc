@@ -78,42 +78,70 @@ void SenSuhu::handleMessage(cMessage *msg)
     scheduleAt(simTime() + 1.0, new cMessage("sendValue"));
 }
 
+class Esp32 : public cSimpleModule
+{
+    protected:
+        virtual void initialize() override;
+        virtual void handleMessage(cMessage *msg) override;
+
+    private:
+        std::string temperature;
+        std::string light;
+        std::string soil;
+        std::string forwardMessage;
+};
+
+Define_Module(Esp32);
+
+void Esp32::initialize()
+{
+
+}
+
+void Esp32::handleMessage(cMessage *msg)
+{
+    std::string senderName = msg->getSenderModule()->getFullName();
+        if (senderName.find("senTanah") != std::string::npos) {
+            soil = msg->getName();
+        } else if (senderName.find("senCahaya") != std::string::npos) {
+            light = msg->getName();
+        } else if (senderName.find("senSuhu") != std::string::npos) {
+            temperature = msg->getName();
+        }
+
+        if (!temperature.empty() && !light.empty() && !soil.empty()) {
+            std::string mergedMsgName = "Temp: " + temperature + "°C" +
+                    " Light: " + light + "lx" +" and soil moisture: " + soil + "%";
+            cMessage *mergedMsg = new cMessage(mergedMsgName.c_str());
+            send(mergedMsg, "out");
+
+            temperature.clear();
+            light.clear();
+            soil.clear();
+        } else if (senderName.find("esp32_3") != std::string::npos) {
+            forwardMessage = msg->getName();
+            std::string fMsg = forwardMessage;
+            cMessage *fMessage = new cMessage(fMsg.c_str());
+            send(fMessage, "out");
+        }
+
+        delete msg;
+}
+
 class Server : public cSimpleModule
 {
   protected:
     virtual void handleMessage(cMessage *msg) override;
-
-  private:
-    std::string temperature;
-    std::string light;
-    std::string soil;
 };
 
 Define_Module(Server);
 
 void Server::handleMessage(cMessage *msg)
 {
-    if (strcmp(msg->getSenderModule()->getFullName(), "senTanah") == 0) {
-        soil = msg->getName();
-    } else if (strcmp(msg->getSenderModule()->getFullName(), "senCahaya") == 0) {
-        light = msg->getName();
-    } else if (strcmp(msg->getSenderModule()->getFullName(), "senSuhu") == 0) {
-        temperature = msg->getName();
-    }
+    send(msg, "out1");
 
-    if (!temperature.empty() && !light.empty() && !soil.empty()) {
-        std::string mergedMsgName = "Temp: " + temperature + "°C" +
-                " Light: " + light + "lx" +" and soil moisture: " + soil + "%";
-        cMessage *mergedMsg = new cMessage(mergedMsgName.c_str());
-        send(mergedMsg, "out");
-
-        temperature.clear();
-        light.clear();
-        soil.clear();
-    }
-
-    delete msg;
 }
+
 
 
 
